@@ -957,3 +957,83 @@ class Rinser(Equipment, ArchiveSection):
         },
         unit='celsius',
     )
+    
+#preliminary test about inserting a new equipment, July 30 2025 - recipe parameters taken from FabLIMS
+class AFM(Equipment, ArchiveSection):
+    m_def = Section(
+        a_eln={
+            'hide': [
+                'lab_id',
+                'datetime',
+            ],
+            'properties': {
+                'order': [
+                    'name',
+                    'inventary_code',
+                    'affiliation',
+                    'product_model',
+                    'institution',
+                    'manufacturer_name',
+                    'is_bookable',
+                    'automatic_loading',
+                    'description',
+                ],
+            },
+        }
+    )
+    AFM-tip_input = Quantity(
+        type=str,
+        description='the model of the probing tip',
+        a_eln={
+            'component': 'StringEditQuantity',
+        },
+    )
+    AFM-Modes_input = Quantity(
+        type=str,
+        description='if proxy or in contact, if linear or scanning',
+        a_eln={
+            'component': 'StringEditQuantity',
+        },
+    )
+    AFM-SetPoint_input = Quantity(
+        type=np.float64,
+        description='ask to Erica Iacob',
+        a_eln={
+            'component': 'NumberEditQuantity',
+        },
+    )
+   AFM-FBGain_input = Quantity(
+        type=np.float64,
+        description='ask to Erica Iacob',
+        a_eln={
+            'component': 'NumberEditQuantity',
+        },
+    )
+AFM-TipResonance_output = Quantity(
+        type=np.float64,
+        description='ask to Erica Iacob',
+        a_eln={
+            'component': 'NumberEditQuantity',
+        },
+    )
+AFM-TipPhase_output = Quantity(
+        type=np.float64,
+        description='ask to Erica Iacob',
+        a_eln={
+            'component': 'NumberEditQuantity',
+        },
+    )
+AFM-LaserIntensity_output = Quantity(
+        type=np.float64,
+        description='ask to Erica Iacob',
+        a_eln={
+            'component': 'NumberEditQuantity',
+        },
+    )
+AFM-AcquisitionFBGain_output = Quantity(
+        type=np.float64,
+        description='ask to Erica Iacob',
+        a_eln={
+            'component': 'NumberEditQuantity',
+        },
+    )
