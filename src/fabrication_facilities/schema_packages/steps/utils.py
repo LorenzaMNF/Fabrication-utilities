@@ -24,7 +24,12 @@ from fabrication_facilities.schema_packages.utils import (
 )
 
 if TYPE_CHECKING:
-    pass
+    from nomad.datamodel.datamodel import (
+        EntryArchive,
+    )
+    from structlog.stdlib import (
+        BoundLogger,
+    )
 
 
 class ICP_Column(ArchiveSection):
@@ -260,7 +265,7 @@ class Carrier(ArchiveSection):
     )
 
 
-class Massflow_controller(FabricationChemical, ArchiveSection):
+class Massflow_controller(FabricationChemical):
     m_def = Section(
         a_eln={'overview': True, 'hide': ['lab_id', 'datetime']},
     )
@@ -317,6 +322,51 @@ class DRIE_Massflow_controller(Massflow_controller):
         a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'sec'},
         unit='sec',
     )
+
+
+class WetReactiveComponents(FabricationChemical):
+    m_def = Section(
+        definition='Chemicals for wet fabrication steps',
+        a_eln={
+            'properties': {
+                'order': [
+                    'name',
+                    'chemical_formula',
+                    'description',
+                    'solution_concentration',
+                ],
+            },
+        },
+    )
+
+    solution_concentration = Quantity(
+        type=np.float64,
+        description='Volume percentage of the reactive in the solution',
+        a_eln={'component': 'NumberEditQuantity'},
+    )
+
+    def normalize(self, archive: 'EntryArchive', logger: 'BoundLogger') -> None:
+        super().normalize(archive, logger)
+
+
+class DevelopingSolution(ArchiveSection):
+    m_def = Section()
+
+    dispensed_volume = Quantity(
+        type=np.float64,
+        a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'milliliter'},
+        unit='milliliter',
+    )
+
+    developing_solution_components = SubSection(
+        section_def=WetReactiveComponents,
+        repeats=True,
+    )
+
+    surfactants = SubSection(section_def=WetReactiveComponents, repeats=True)
+
+    def normalize(self, archive: 'EntryArchive', logger: 'BoundLogger') -> None:
+        super().normalize(archive, logger)
 
 
 class ResistivityControl(ArchiveSection):
@@ -391,10 +441,24 @@ class Priming(ArchiveSection):
         a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'sec'},
         unit='sec',
     )
+    final_cooling_tempereature = Quantity(
+        type=np.float64,
+        a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'celsius'},
+        unit='celsius',
+    )
+    final_cooling_duration = Quantity(
+        type=np.float64,
+        a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'sec'},
+        unit='sec',
+    )
 
 
 class DeIonizedWaterRinsing(ArchiveSection):
-    m_def = Section()
+    m_def = Section(
+        description="""
+        Section describing passages in a step where de ionized water is
+        """
+    )
 
     rinsing_cycles = Quantity(
         type=int,
@@ -408,18 +472,18 @@ class DeIonizedWaterRinsing(ArchiveSection):
     )
 
 
-class DeIonizedWaterDumping(ArchiveSection):
-    m_def = Section()
+# class DeIonizedWaterDumping(ArchiveSection):
+#     m_def = Section()
 
-    dumping_cycles = Quantity(
-        type=int,
-        a_eln={'component': 'NumberEditQuantity'},
-    )
-    dumping_drain_duration = Quantity(
-        type=np.float64,
-        a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'minute'},
-        unit='minute',
-    )
+#     dumping_cycles = Quantity(
+#         type=int,
+#         a_eln={'component': 'NumberEditQuantity'},
+#     )
+#     dumping_drain_duration = Quantity(
+#         type=np.float64,
+#         a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'minute'},
+#         unit='minute',
+#     )
 
 
 # class BeamSource(ArchiveSection):

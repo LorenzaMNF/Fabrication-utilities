@@ -318,16 +318,50 @@ class LPCVD(FabricationProcessStep):
                     'step_type',
                     'definition_of_process_step',
                     'keywords',
+                    'short_name',
+                    'reference_name',
                     'recipe_name',
                     'recipe_file',
                     'recipe_preview',
                     'thickness_target',
+                    'thickness_measured',
+                    'sample_temperature',
                     'duration_target',
+                    'duration_measured',
                     'deposition_rate_target',
                     'notes',
                 ]
             },
         },
+    )
+
+    short_name = Quantity(
+        type=str,
+        description='Deposition name',
+        a_eln={
+            'component': 'StringEditQuantity',
+            'label': 'Deposition name',
+        },
+    )
+    reference_name = Quantity(
+        type=str,
+        description='Reference Deposition name',
+        a_eln={
+            'component': 'StringEditQuantity',
+            'label': 'Reference deposition name',
+        },
+    )
+    duration_measured = Quantity(
+        type=np.float64,
+        description='Real time employed',
+        a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'sec'},
+        unit='sec',
+    )
+    sample_temperature = Quantity(
+        type=np.float64,
+        description='Temperature of the sample',
+        a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'celsius'},
+        unit='celsius',
     )
 
     thickness_target = Quantity(
@@ -337,6 +371,12 @@ class LPCVD(FabricationProcessStep):
             'component': 'NumberEditQuantity',
             'defaultDisplayUnit': 'nm',
         },
+        unit='nm',
+    )
+
+    thickness_measured = Quantity(
+        type=np.float64,
+        a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'nm'},
         unit='nm',
     )
 
@@ -492,6 +532,9 @@ class Spin_Coatingbase(FabricationProcessStepBase):
                     'dispensing_mode',
                     'dispensing_locus',
                     'dispensed_volume',
+                    'adhesion_type',
+                    'back_rinsing',
+                    'side_rinsing',
                     'notes',
                 ]
             },
@@ -538,6 +581,27 @@ class Spin_Coatingbase(FabricationProcessStepBase):
         unit='milliliter',
     )
 
+    ahesion_type = Quantity(
+        type=MEnum(
+            'None',
+            'Direct',
+        ),
+        a_eln={'component': 'EnumEditQuantity'},
+    )
+    back_rinsing = Quantity(
+        type=bool,
+        description="""
+        At the end of the resist deposition is there a phase of polishing on the back?
+        """,
+        a_eln={'component': 'BoolEditQuantity'},
+    )
+    side_rinsing = Quantity(
+        type=bool,
+        description="""
+        At the end of the resist deposition is there a phase of polishing on the sides?
+        """,
+        a_eln={'component': 'BoolEditQuantity'},
+    )
     resist_elemental_composition = SubSection(
         section_def=ElementalComposition, repeats=True
     )

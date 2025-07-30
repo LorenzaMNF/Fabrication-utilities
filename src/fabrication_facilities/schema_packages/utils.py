@@ -12,7 +12,7 @@ from nomad.datamodel.data import ArchiveSection, EntryData
 from nomad.datamodel.metainfo.basesections import ElementalComposition
 from nomad.datamodel.metainfo.eln import Chemical
 from nomad.datamodel.metainfo.plot import PlotlyFigure, PlotSection
-from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo import Quantity, Section, SubSection
 
 if TYPE_CHECKING:
     from nomad.datamodel.datamodel import (
@@ -121,26 +121,31 @@ class FabricationChemical(Chemical, ArchiveSection):
     def normalize(self, archive: 'EntryArchive', logger: 'BoundLogger') -> None:
         super().normalize(archive, logger)
         if self.chemical_formula:
-            elements, counts = parse_chemical_formula(self.chemical_formula)
-            total = 0
-            for token in counts:
-                total += int(token)
-            mass = sum(am[an[el]] * cou for el, cou in zip(elements, counts))
-            if total != 0:
-                elemental_fraction = np.array(counts) / total
-                elementality = []
-                i = 0
-                for entry in elements:
-                    elemental_try = ElementalComposition()
-                    elemental_try.element = entry
-                    elemental_try.atomic_fraction = elemental_fraction[i]
-                    mass_frac = (am[an[entry]] * counts[i]) / mass
-                    elemental_try.mass_fraction = mass_frac
-                    i += 1
-                    elementality.append(elemental_try)
-            else:
-                print('No elements provided')
-            self.elemental_composition = elementality
+            self.elemental_composition = generate_elementality(self.chemical_formula)
+
+    # def normalize(self, archive: 'EntryArchive', logger: 'BoundLogger') -> None:
+    #     super().normalize(archive, logger)
+    #     if self.chemical_formula:
+    #         elements, counts = parse_chemical_formula(self.chemical_formula)
+    #         total = 0
+    #         for token in counts:
+    #             total += int(token)
+    #         mass = sum(am[an[el]] * cou for el, cou in zip(elements, counts))
+    #         if total != 0:
+    #             elemental_fraction = np.array(counts) / total
+    #             elementality = []
+    #             i = 0
+    #             for entry in elements:
+    #                 elemental_try = ElementalComposition()
+    #                 elemental_try.element = entry
+    #                 elemental_try.atomic_fraction = elemental_fraction[i]
+    #                 mass_frac = (am[an[entry]] * counts[i]) / mass
+    #                 elemental_try.mass_fraction = mass_frac
+    #                 i += 1
+    #                 elementality.append(elemental_try)
+    #         else:
+    #             print('No elements provided')
+    #         self.elemental_composition = elementality
 
 
 def make_line_express(list1, list2, labelx, labely, finalist, labelfigure):
@@ -458,65 +463,23 @@ class TimeRampRotation(PlotSection, EntryData):
             )
 
 
-class ReactiveComponents(FabricationChemical):
-    m_def = Section(
-        definition='Chemicals for wet fabrication steps',
-        a_eln={
-            'hide': [
-                'lab_id',
-                'datetime',
-                'comment',
-                'duration',
-                'end_time',
-                'start_time',
-            ],
-            'properties': {
-                'order': [
-                    'name',
-                    'chemical_formula',
-                    'description',
-                    'purity_level',
-                    'initial_concentration',
-                    'dispensed_volume',
-                    'final_solution_concentration',
-                ],
-            },
-        },
-    )
-
-    purity_level = Quantity(
-        description='Purity level of the starting reactives by manufacturer',
-        type=MEnum(
-            'VLSI',
-            'ULSI',
-            'SLSI',
-        ),
-        a_eln={'component': 'EnumEditQuantity'},
-    )
-
-    initial_concentration = Quantity(
-        type=np.float64,
-        description='Initial volume percentage of the reactives by manufacturer',
-        a_eln={'component': 'NumberEditQuantity'},
-    )
-
-    dispensed_volume = Quantity(
-        type=np.float64,
-        description='Volume of reactive used to generate the final solution',
-        a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'liter'},
-        unit='liter',
-    )
-
-    final_solution_concentration = Quantity(
-        type=np.float64,
-        description='Final volume percentage of the reactive in the solution',
-        a_eln={'component': 'NumberEditQuantity'},
-    )
-
-
 class BeamSource(ArchiveSection):
     m_def = Section()
 
     emitter_material = Quantity(type=str, a_eln={'component': 'StringEditQuantity'})
 
     probe = Quantity(type=str, a_eln={'component': 'StringEditQuantity'})
+
+
+def double_list_reading(list1, list2, archive, logger):
+    if list1 and list2:
+        reactives = []
+        for v1, v2 in zip(list1, list2):
+            chemical = FabricationChemical()
+            val1 = v1  # if v1 != '-' else val1=v2
+            val2 = v2 if v2 != '-' else None
+            chemical.name = val1
+            chemical.chemical_formula = val2
+            chemical.normalize(archive, logger)
+            reactives.append(chemical)
+    return reactives

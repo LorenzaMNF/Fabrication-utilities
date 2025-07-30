@@ -29,12 +29,14 @@ from fabrication_facilities.schema_packages.steps.utils import (
     Carrier,
     Chuck,
     DeIonizedWaterRinsing,
+    DevelopingSolution,
     DRIE_Chuck,
     DRIE_Massflow_controller,
     ICP_Column,
     Massflow_controller,
     ResistivityControl,
     SpinningComponent,
+    WetReactiveComponents,
 )
 from fabrication_facilities.schema_packages.utils import (
     FabricationChemical,
@@ -584,7 +586,7 @@ class WetEtchingbase(FabricationProcessStepBase):
     )
 
     reactives_used_to_etch = SubSection(
-        section_def=FabricationChemical,
+        section_def=WetReactiveComponents,
         repeats=True,
     )
 
@@ -609,7 +611,7 @@ class WetEtchingbase(FabricationProcessStepBase):
         else:
             reactives = []
             for v1, v2 in zip(self.etching_reactives, self.etching_reactives_formulas):
-                chemical = FabricationChemical()
+                chemical = WetReactiveComponents()
                 val1 = v1  # if v1 != '-' else val1=v2
                 val2 = v2 if v2 != '-' else None
                 chemical.name = val1
@@ -645,7 +647,7 @@ class WetEtchingOutputs(ArchiveSection):
     )
 
 
-class WetCleaningbase(FabricationProcessStepBase):  # WetEtchingbase):
+class WetCleaningbase(FabricationProcessStepBase):
     m_def = Section(
         description="""
         Atomistic components of a fabrication process step where de ionized water is
@@ -664,20 +666,9 @@ class WetCleaningbase(FabricationProcessStepBase):  # WetEtchingbase):
                     'starting_date',
                     'ending_date',
                     'duration',
-                    # 'short_names',
-                    # 'target_materials_formulas',
-                    # 'etching_reactives',
-                    # 'etching_reactives_formulas',
-                    # 'etching_temperature',
-                    # 'etching_duration',
                     'pump',
                     'dumping_cycles',
                     'dumping_drain_duration',
-                    # 'wetting',
-                    # 'wetting_duration',
-                    'ultrasounds_required',
-                    'ultrasounds_frequency',
-                    'ultrasounds_duration',
                     'notes',
                 ]
             },
@@ -686,31 +677,16 @@ class WetCleaningbase(FabricationProcessStepBase):  # WetEtchingbase):
 
     dumping_cycles = Quantity(
         type=int,
+        description='Number of cycles where water cleans the surfaces',
         a_eln={'component': 'NumberEditQuantity'},
     )
     dumping_drain_duration = Quantity(
         type=np.float64,
+        description='Time used to drain the tank of cleaning',
         a_eln={'component': 'NumberEditQuantity', 'defaultDisplayUnit': 'minute'},
         unit='minute',
     )
-    # etching_temperature = Quantity(
-    #     type=np.float64,
-    #     a_eln={
-    #         'component': 'NumberEditQuantity',
-    #         'defaultDisplayUnit': 'celsius',
-    #         'label': 'cleaning temperature',
-    #     },
-    #     unit='celsius',
-    # )
-    # etching_duration = Quantity(
-    #     type=np.float64,
-    #     a_eln={
-    #         'component': 'NumberEditQuantity',
-    #         'defaultDisplayUnit': 'minute',
-    #         'label': 'cleaning duration',
-    #     },
-    #     unit='minute',
-    # )
+
     resistivity_control = SubSection(
         section_def=ResistivityControl,
         repeats=False,
@@ -855,8 +831,6 @@ class SpinResistDevelopmentbase(FabricationProcessStepBase):
                     'ending_date',
                     'duration',
                     'developing_mode',
-                    'developing_solution',
-                    'developing_solution_proportions',
                     'developing_duration',
                     'developing_temperature',
                     'number of loops',
@@ -873,14 +847,7 @@ class SpinResistDevelopmentbase(FabricationProcessStepBase):
         ),
         a_eln={'component': 'EnumEditQuantity'},
     )
-    developing_solution = Quantity(
-        type=str,
-        a_eln={'component': 'StringEditQuantity'},
-    )
-    developing_solution_proportions = Quantity(
-        type=str,
-        a_eln={'component': 'StringEditQuantity'},
-    )
+    developer_used = Quantity(type=str, a_eln={'components': 'StringEditQuantity'})
     developing_duration = Quantity(
         type=np.float64,
         a_eln={
@@ -904,7 +871,18 @@ class SpinResistDevelopmentbase(FabricationProcessStepBase):
 
     spin_parameters = SubSection(section_def=SpinningComponent, repeats=False)
 
+    developing_solution = SubSection(section_def=DevelopingSolution, repeats=False)
+
     rinsing = SubSection(section_def=DeIonizedWaterRinsing, repeats=False)
+
+    # def normalize(self, archive: 'EntryArchive', logger: 'BoundLogger') -> None:
+    #     super().normalize(archive, logger)
+    #     self.reactives_used_to_develop = double_list_reading(
+    #         self.developing_reactives,
+    #         self.developing_reactives_formulas,
+    #         archive,
+    #         logger,
+    #     )
 
 
 class SpinResistDevelopment(FabricationProcessStep):

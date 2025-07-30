@@ -37,12 +37,10 @@ from fabrication_facilities.schema_packages.equipments.utils import (
     ICP_ColumnCapabilities,
     Massflow_parameter,
     SpinnerSpinParameters,
+    WetBenchSolutionComponents,
     WritingCapabilities,
 )
 from fabrication_facilities.schema_packages.fabrication_utilities import Equipment
-from fabrication_facilities.schema_packages.utils import (
-    ReactiveComponents,
-)
 
 if TYPE_CHECKING:
     from nomad.datamodel.datamodel import (
@@ -389,7 +387,7 @@ class Wet_Bench_Unit(Equipment):
         },
     )
 
-    reactives = SubSection(section_def=ReactiveComponents, repeats=True)
+    reactives = SubSection(section_def=WetBenchSolutionComponents, repeats=True)
 
     def normalize(self, archive: 'EntryArchive', logger: 'BoundLogger') -> None:
         if self.volume_of_solution is not None:
