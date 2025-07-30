@@ -981,56 +981,57 @@ class AFM(Equipment, ArchiveSection):
             },
         }
     )
-    AFM-tip_input = Quantity(
+    
+    AFMTip = Quantity(
         type=str,
         description='the model of the probing tip',
         a_eln={
             'component': 'StringEditQuantity',
         },
     )
-    AFM-Modes_input = Quantity(
+    AFMmode = Quantity(
         type=str,
         description='if proxy or in contact, if linear or scanning',
         a_eln={
             'component': 'StringEditQuantity',
         },
     )
-    AFM-SetPoint_input = Quantity(
+    AFMSetpoint = Quantity(
         type=np.float64,
         description='ask to Erica Iacob',
         a_eln={
             'component': 'NumberEditQuantity',
         },
     )
-   AFM-FBGain_input = Quantity(
+   AFMFB_gain = Quantity(
         type=np.float64,
         description='ask to Erica Iacob',
         a_eln={
             'component': 'NumberEditQuantity',
         },
     )
-AFM-TipResonance_output = Quantity(
+AFMTip_resonance = Quantity(
         type=np.float64,
         description='ask to Erica Iacob',
         a_eln={
             'component': 'NumberEditQuantity',
         },
     )
-AFM-TipPhase_output = Quantity(
+AFMTip_phase = Quantity(
         type=np.float64,
         description='ask to Erica Iacob',
         a_eln={
             'component': 'NumberEditQuantity',
         },
     )
-AFM-LaserIntensity_output = Quantity(
+AFMLaser_intensity = Quantity(
         type=np.float64,
         description='ask to Erica Iacob',
         a_eln={
             'component': 'NumberEditQuantity',
         },
     )
-AFM-AcquisitionFBGain_output = Quantity(
+AFMFB_gain = Quantity(
         type=np.float64,
         description='ask to Erica Iacob',
         a_eln={
