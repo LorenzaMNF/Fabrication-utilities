@@ -1005,39 +1005,35 @@ class AFM(Equipment, ArchiveSection):
             'component': 'NumberEditQuantity',
         },
     )
-   afm_fb_gain = Quantity(
+    afm_fb_gain = Quantity(
         type=np.float64,
         description='ask to Erica Iacob',
         a_eln={
             'component': 'NumberEditQuantity',
         },
     )
-
-afm_tip_resonance = Quantity(
+    afm_tip_resonance = Quantity(
         type=np.float64,
         description='ask to Erica Iacob',
         a_eln={
             'component': 'NumberEditQuantity',
         },
     )
-
-afm_tip_phase = Quantity(
+    afm_tip_phase = Quantity(
         type=np.float64,
         description='ask to Erica Iacob',
         a_eln={
             'component': 'NumberEditQuantity',
         },
     )
-
-afm_laser_intensity = Quantity(
+    afm_laser_intensity = Quantity(
         type=np.float64,
         description='ask to Erica Iacob',
         a_eln={
             'component': 'NumberEditQuantity',
         },
     )
-
-afm_fb_gain_o = Quantity(
+    afm_fb_gain_o = Quantity(
         type=np.float64,
         description='ask to Erica Iacob',
         a_eln={
