@@ -1002,6 +1002,7 @@ class AFM(Equipment, ArchiveSection):
         a_eln={
             'component': 'NumberEditQuantity',
         },
+        unit='nm',
     )
     afm_fb_gain = Quantity(
         type=np.float64,
@@ -1009,6 +1010,7 @@ class AFM(Equipment, ArchiveSection):
         a_eln={
             'component': 'NumberEditQuantity',
         },
+        unit='nm',
     )
     afm_tip_resonance = Quantity(
         type=np.float64,
@@ -1016,6 +1018,7 @@ class AFM(Equipment, ArchiveSection):
         a_eln={
             'component': 'NumberEditQuantity',
         },
+        unit='MHz',
     )
     afm_tip_phase = Quantity(
         type=np.float64,
@@ -1023,6 +1026,7 @@ class AFM(Equipment, ArchiveSection):
         a_eln={
             'component': 'NumberEditQuantity',
         },
+        unit='nm',
     )
     afm_laser_intensity = Quantity(
         type=np.float64,
@@ -1030,6 +1034,7 @@ class AFM(Equipment, ArchiveSection):
         a_eln={
             'component': 'NumberEditQuantity',
         },
+        unit='mA',
     )
     afm_fb_gain_o = Quantity(
         type=np.float64,
@@ -1037,4 +1042,5 @@ class AFM(Equipment, ArchiveSection):
         a_eln={
             'component': 'NumberEditQuantity',
         },
+        unit='nm',
     )
